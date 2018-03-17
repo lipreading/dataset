@@ -1,13 +1,16 @@
-const parseArgs = require('../utils/util').parseArgs;
+const readFile = require('../utils/util').readFile;
 const Browser = require('../browser/Browser');
+const countWords = require('./countWords');
 
 const browser = new Browser();
-const args = Browser.checkArgs(parseArgs(process.argv));
-const urls = args.urls.split(',');
+let CONFIG = {};
+const START_TIME = new Date();
 
-urls.forEach(async url => {
-    await browser.createBuilder();
-    url = `https://www.youtube.com/watch?v=${url}`; //R1obPlfmPdo
-    await browser.openPage(url);
-    await browser.removeBuilder();
-});
+(async () => {
+    CONFIG = JSON.parse(await readFile('init.json'));
+    await countWords({
+        browser: browser,
+        startTime: START_TIME,
+        urls: CONFIG.urls
+    });
+})();
