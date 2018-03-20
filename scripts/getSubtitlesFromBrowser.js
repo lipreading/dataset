@@ -1,5 +1,5 @@
 /* Поиск элемента с субтитрами */
-const getSubtitles = async (browser) => {
+const getSubtitlesFromBrowser = async (browser) => {
     await browser.executeScript(() => {
         const btn = Array.prototype.slice.call(document.getElementsByTagName('button'))
             .filter((el) => el.getAttribute('aria-label') === 'Ещё')[0];
@@ -34,4 +34,4 @@ const getSubtitles = async (browser) => {
     });
 };
 
-module.exports = getSubtitles;
+module.exports = getSubtitlesFromBrowser;

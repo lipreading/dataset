@@ -11,22 +11,47 @@ module.exports = {
         }, {});
     },
 
-    writeToFile(fileName, data) {
+    writeToFile(path, data) {
         return new Promise((resolve, reject) => {
-            fs.writeFile(`${process.cwd()}/res/${fileName}`, data, (err) => {
+            fs.writeFile(`${process.cwd()}/res/${path}`, data, (err) => {
                 if (err) reject(err);
                 resolve();
             });
         });
     },
 
-    readFile(fileName) {
+    readFile(path) {
         return new Promise((resolve, reject) => {
-            fs.readFile(`${process.cwd()}/res/${fileName}`, (err, data) => {
+            fs.readFile(`${process.cwd()}/res/${path}`, (err, data) => {
                 if (err) reject(err);
                 resolve(data);
             });
         });
+    },
+
+    removeFile(path) {
+        return new Promise((resolve, reject) => {
+            fs.unlink(`${process.cwd()}/res/${path}`, (err) => {
+                if (err) reject(err);
+                resolve();
+            });
+        });
+    },
+
+    getLstat(path) {
+        return fs.lstatSync(`${process.cwd()}/res/${path}`);
+    },
+
+    mkDir(path) {
+        fs.mkdirSync(`${process.cwd()}/res/${path}`)
+    },
+
+    rmDir(path) {
+        fs.rmdirSync(`${process.cwd()}/res/${path}`)
+    },
+
+    readDir(path) {
+        return fs.readdirSync(`${process.cwd()}/res/${path}`);
     },
 
     divTime(startTime, desc) {

@@ -1,6 +1,6 @@
 const utils = require('../utils/util');
 const writeToFile = require('../utils/util').writeToFile;
-const getSubtitles = require('./getSubtitles');
+const getSubtitlesFromBrowser = require('./getSubtitlesFromBrowser');
 
 const videosWords = {};
 
@@ -14,20 +14,23 @@ const countWords = async (data) => {
         await browser.openPage(url);
         await browser.wait(3000);
 
-        const subtitles = await getSubtitles(browser);
-        await parseWords(subtitles);
+        try {
+            const subtitles = await getSubtitlesFromBrowser(browser);
+            await parseWords(subtitles);
+        } catch (err) {console.log(`${err}; url=${url}`)}
 
         await browser.removeBuilder();
+        console.log(`Посчитал слова в видеозаписи №${i + 1}`);
     }
 
     const result = Object.keys(videosWords).reduce((res, word) => {
-        // if (word.length > 4 && word.length < 12 && videosWords[word] > 100) {
+        if (word.length > 4 && word.length < 12 /*&& videosWords[word] > 100*/) {
         res[word] = videosWords[word];
-        // }
+        }
         return res;
     }, {});
     await writeToFile('words.json', JSON.stringify(result));
-    console.log(utils.divTime(startTime, 'Посчитал слова в видосах'));
+    console.log(utils.divTime(startTime, 'Посчитал слова в видеозаписях'));
 };
 
 /* Парсер слов */
