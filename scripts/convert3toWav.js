@@ -1,4 +1,4 @@
-const { readDir } = require('../utils/util');
+const { readDir } = require('../js-modules/utils/util');
 const { spawn } = require('child_process');
 
 const convert = async () => {

@@ -1,6 +1,6 @@
-const readFile = require('../utils/util').readFile;
-const Browser = require('../browser/Browser');
-const countWordsFromBrowser = require('./countWordsFromBrowser');
+const readFile = require('../js-modules/utils/util').readFile;
+const Browser = require('../js-modules/browser/Browser');
+const countWordsFromBrowser = require('../js-modules/countWordsFromBrowser');
 
 const browser = new Browser();
 let CONFIG = {};

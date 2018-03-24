@@ -6,7 +6,7 @@ const {
     mkDir,
     rmDir,
     readDir
-} = require('../utils/util');
+} = require('../js-modules/utils/util');
 
 const ignoreFiles = ['.DS_Store'];
 
@@ -37,7 +37,7 @@ const renameFiles = async () => {
             const data = await readFile(`videos/${oldFileName}`);
             mkDir(`videos/${folderName}`);
             await writeToFile(`videos/${folderName}/${newFileName}`, data);
-            await removeFile(`videos/${oldFileName}`);
+            removeFile(`videos/${oldFileName}`);
         }
     }
 };
