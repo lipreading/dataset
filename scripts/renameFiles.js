@@ -33,6 +33,8 @@ const renameFiles = async () => {
 
         if (ignoreFiles.indexOf(oldFileName) === -1 && status.isFile()) {
             const newFileName = oldFileName.split('-').slice(1).join('-');
+            console.log(`#${i}/${files.length} ${newFileName}`);
+
             const folderName = newFileName.split('.')[0];
             const data = await readFile(`videos/${oldFileName}`);
             mkDir(`videos/${folderName}`);
