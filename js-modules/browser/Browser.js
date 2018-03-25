@@ -23,7 +23,9 @@ class Browser {
     }
 
     async removeBuilder() {
-        await this._driver.quit();
+        try {
+            await this._driver.quit();
+        } catch (err) {}
     }
 
     async openPage(url) {
