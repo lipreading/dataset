@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*- 
 import os
 import glob
 import re
@@ -11,6 +12,10 @@ import numpy as np
 import imutils
 from skimage import io
 from os import listdir
+
+OKBLUE = '\033[94m'
+OKGREEN = '\033[92m'
+ENDC = '\033[0m'
 
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(os.path.join(os.getcwd(), 'external_res', 'shape_predictor_68_face_landmarks.dat'))
@@ -56,9 +61,10 @@ def draw_rect_on_canvas(img, face_bound, dots):
 
 # все имена папок с видео
 videos_names = listdir(os.path.join(os.getcwd(), 'res', 'videos'))
-#videos_names = ['0Di38ACxCFI']
 
 for num, dir_name in enumerate(videos_names):
+    if (dir_name == '.DS_Store'):
+        continue
     # ПУТЬ папки с кадрами
     video_folder = os.path.join(os.getcwd(), 'res', 'videos', dir_name, 'frames')
     # ПУТЬ папки с кадрами губ
@@ -68,7 +74,7 @@ for num, dir_name in enumerate(videos_names):
     mouth_frames_data_file = os.path.join(mouth_frames_folder_data, 'data.csv')
 
     if os.path.exists(mouth_frames_folder):
-        print('Video Already cooked #{}/{} - {}'.format(num + 1, len(videos_names), dir_name))
+        print((OKGREEN + 'Video Already cooked #{}/{} - {}' + ENDC).format(num + 1, len(videos_names), dir_name))
         continue
     #if os.path.exists(mouth_frames_folder):
     #    shutil.rmtree(mouth_frames_folder)
@@ -85,8 +91,7 @@ for num, dir_name in enumerate(videos_names):
 
         frame_number = int(re.search('\/thumb(\d+)\.\w+$', frame_path).group(1))
         if frame_number % 100 == 0 or frame_number == 1:
-            print("Processing Video #{}/{} - {}, frame_number: {}/{}".format(num + 1, len(videos_names), dir_name, frame_number, len(glob_frames)))
-
+            print(('Processing Video ' + OKBLUE + '#{}/{}' + ENDC + ' - {}, frame_number: ' + OKBLUE + '{}/{}' + ENDC).format(num + 1, len(videos_names), dir_name, frame_number, len(glob_frames)))
         img = io.imread(frame_path)
         # массив лиц
         dets = detector(img, 1)
