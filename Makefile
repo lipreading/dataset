@@ -7,4 +7,4 @@
 # convert3toWav
 # devideOnFrames
 # getFaceIntervals
-# getWordsFroVideo
+# getWordsForVideo

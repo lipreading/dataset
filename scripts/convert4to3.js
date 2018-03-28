@@ -5,6 +5,9 @@ const convert = async () => {
     const dirs = readDir('videos');
 
     for (let i = 0; i < dirs.length; i++) {
+        if (dirs[i] === '.DS_Store') {
+            continue;
+        }
         const path = `${process.cwd()}/res/videos/${dirs[i]}/${dirs[i]}`;
 
         console.log(`#${i}/${dirs.length} ${dirs[i]}`);
