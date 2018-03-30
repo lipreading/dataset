@@ -14,6 +14,7 @@ import imutils
 from skimage import io
 from os import listdir
 from PIL import Image
+import PIL
 from resizeimage import resizeimage
 
 OKBLUE = '\033[94m'
@@ -35,62 +36,50 @@ def check_point_in_bound(p, b):
 def is_size_ok(bound):
     return not (bound[2] > N_SIZE or bound[3] > N_SIZE)
 
-def resize_img(path, diff):
-    fd_img = open(path, 'r')
-    img = Image.open(fd_img)
+def resize_img_by_height(path, mouth_nose_distance):
+    img = Image.open(path)
     w, h = img.size
-    print(('ImageSize: {}_{} plus: {}').format(w, h, diff))
-    h += diff
-    img = resizeimage.resize_height(img, h)
-    img.save(path, img.format)
-    fd_img.close()
+    new_h = h * (N_SIZE / 2) / mouth_nose_distance
+    ratio = (new_h / float(h))
+    width = int((float(w) * float(ratio)))
+    img = img.resize((width, int(new_h)), PIL.Image.ANTIALIAS)
 
-def prepare_img(path):
-    mouth_nose_distance = 987
-    MOUTH_NOSE_DIST_MAX = 65
-    MOUTH_NOSE_DIST_MIN = 60
+    img.save(path)
+
+def prepare_img(path, force_return=False):
+    MOUTH_NOSE_DIST_MAX = N_SIZE / 2 + 3
+    MOUTH_NOSE_DIST_MIN = N_SIZE / 2
     DIFF = 10
     dets = []
     dots = []
-    while True:
-        img = io.imread(path)
-        # массив лиц
-        dets = detector(img, 1)
 
-        # img2 = cv2.imread(path, 1)
-        # det = dets[1]
-        # draw_rect_on_canvas(img2, [det.left(), det.top(), det.right() - det.left(), det.bottom() - det.top()], [])
+    img = io.imread(path)
 
-        if len(dets) == 1:
-            # контрольные точки лица
-            shape = predictor(img, dets[0])
-            for i in range(shape.num_parts):
-                dot = shape.parts().pop(i)
-                dots.append([int(dot.x), int(dot.y)])
+    # массив лиц
+    dets = detector(img, 1)
 
-            if shape.num_parts == 68:
-                nose_p = dots[30]
-                mouth_p = dots[62]
-                mouth_nose_distance = math.sqrt(math.pow(nose_p[0] - mouth_p[0], 2) + math.pow(nose_p[1] - mouth_p[1], 2))
-                if MOUTH_NOSE_DIST_MIN <= mouth_nose_distance <= MOUTH_NOSE_DIST_MAX:
-                    print('break3 ' + mouth_nose_distance)
-                    break
-                elif mouth_nose_distance > MOUTH_NOSE_DIST_MAX:
-                    resize_img(path, -DIFF)
-                elif mouth_nose_distance < MOUTH_NOSE_DIST_MIN:
-                    resize_img(path, DIFF)
+    if len(dets) == 1:
+        # контрольные точки лица
+        shape = predictor(img, dets[0])
+
+        for i in range(shape.num_parts):
+            dot = shape.parts().pop(i)
+            dots.append([int(dot.x), int(dot.y)])
+
+        if force_return:
+            return dets, dots
+
+        if shape.num_parts == 68:
+            nose_p = dots[30]
+            mouth_p = dots[62]
+            mouth_nose_distance = math.sqrt(math.pow(nose_p[0] - mouth_p[0], 2) + math.pow(nose_p[1] - mouth_p[1], 2))
+
+            if MOUTH_NOSE_DIST_MIN <= mouth_nose_distance <= MOUTH_NOSE_DIST_MAX:
+                return dets, dots
             else:
-                print('break1')
-                dets = []
-                dots = []
-                break
-        else:
-            print('break2')
-            dets = []
-            dots = []
-            break
-    print(('mouth_nose_distance: {}').format(mouth_nose_distance))
-    return dets, dots
+                resize_img_by_height(path, mouth_nose_distance)
+                return prepare_img(path, True)
+    return [], []
 
 def draw_rect_on_canvas(img, face_bound, dots):
     window_name = 'result'
@@ -121,9 +110,9 @@ def draw_rect_on_canvas(img, face_bound, dots):
 
 # все имена папок с видео
 videos_names = listdir(os.path.join(os.getcwd(), 'res', 'videos'))
-videos_names = ['x-q-w92tlPI']
 
 for num, dir_name in enumerate(videos_names):
+    print((OKGREEN + 'Start {}' + ENDC).format(dir_name))
     if (dir_name == '.DS_Store'):
         continue
     # ПУТЬ папки с кадрами
@@ -134,14 +123,12 @@ for num, dir_name in enumerate(videos_names):
     mouth_frames_folder_data = os.path.join(os.getcwd(), 'res', 'videos', dir_name, 'mouth_frames', '__data')
     mouth_frames_data_file = os.path.join(mouth_frames_folder_data, 'data.csv')
 
-    # TODO раскоментить!!!!
-    # if os.path.exists(mouth_frames_folder):
-    #     print((OKGREEN + 'Video Already cooked #{}/{} - {}' + ENDC).format(num + 1, len(videos_names), dir_name))
-    #     continue
-
-    # TODO удалить!!!!
     if os.path.exists(mouth_frames_folder):
-       shutil.rmtree(mouth_frames_folder)
+        print((OKGREEN + 'Video Already cooked #{}/{} - {}' + ENDC).format(num + 1, len(videos_names), dir_name))
+        continue
+
+    # if os.path.exists(mouth_frames_folder):
+    #    shutil.rmtree(mouth_frames_folder)
 
     os.makedirs(mouth_frames_folder)
     os.makedirs(mouth_frames_folder_data)
@@ -154,11 +141,8 @@ for num, dir_name in enumerate(videos_names):
             key=lambda name: int(re.search('\/thumb(\d+)\.\w+$', name).group(1))):
 
         frame_number = int(re.search('\/thumb(\d+)\.\w+$', frame_path).group(1))
-        # TODO удалить!!!!
-        if (frame_number < 500):
-            continue
 
-        if frame_number % 100 == 0 or frame_number == 1:
+        if frame_number % 5 == 0 or frame_number == 1:
             print(('Processing Video ' + OKBLUE + '#{}/{}' + ENDC + ' - {}, frame_number: ' + OKBLUE + '{}/{}' + ENDC).format(num + 1, len(videos_names), dir_name, frame_number, len(glob_frames)))
 
         dets, dots = prepare_img(frame_path)
@@ -172,10 +156,9 @@ for num, dir_name in enumerate(videos_names):
         # вырезанное изображение губ
         img = cv2.imread(frame_path, 1)
         roi = img[mouth_bound[1]:mouth_bound[1] + mouth_bound[3], mouth_bound[0]:mouth_bound[0] + mouth_bound[2]]
-        draw_rect_on_canvas(img, mouth_bound, [])
-        # if is_size_okey:
-        #     cv2.imwrite(os.path.join(mouth_frames_folder, str(frame_number) + '.jpg'), roi)
-        #     frames_numbers.append(frame_number)
+
+        cv2.imwrite(os.path.join(mouth_frames_folder, str(frame_number) + '.jpg'), roi)
+        frames_numbers.append(frame_number)
 
     result = []
     curr = []
