@@ -22,8 +22,8 @@ const convert = async () => {
             await getData(ffmpeg);
             /* removeFile(`videos/${name}/decoder-test.scp`);
             removeFile(`videos/${name}/decoder-test.utt2spk`); */
-            await writeToFile(`videos/${name}/decoder-kaldi.scp`, `decoder ${file}.wav`);
-            await writeToFile(`videos/${name}/decoder-kaldi.utt2spk`, `decoder decoder`);
+            //await writeToFile(`videos/${name}/decoder-kaldi.scp`, `decoder ${file}.wav`);
+            //await writeToFile(`videos/${name}/decoder-kaldi.utt2spk`, `decoder decoder`);
         } catch (e) {
             console.log(`Error: ${e}`);
         }

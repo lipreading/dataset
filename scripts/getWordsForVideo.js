@@ -24,6 +24,16 @@ const browser = new Browser();
 
                 const subtitles = await getSubtitlesFromBrowser(browser);
                 await writeToFile(`videos/${videoName}/words.json`, JSON.stringify(subtitles));
+
+                const wordsTxt = subtitles.map(data => data.text).reduce((res, el) => {
+                    if (el !== '[музыка]') {
+                        el.split(' ').forEach(word => {
+                            res += `${word}\n`;
+                        });
+                    }
+                    return res;
+                }, '');
+                await writeToFile(`videos/${videoName}/words.txt`, wordsTxt);
             }
         } catch (err) {
             console.log(`${err}; url=${videoName}`)

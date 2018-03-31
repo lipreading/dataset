@@ -4,7 +4,7 @@
 # youtube-dl
 # renameFiles
 # convert4to3
-# convert3toWav
 # devideOnFrames
 # getFaceIntervals
 # getWordsForVideo
+# getWordsAlignment(+ replaceUnicodeInWordsMap)

@@ -13,7 +13,7 @@ module.exports = {
 
     writeToFile(path, data) {
         return new Promise((resolve, reject) => {
-            fs.writeFile(`${process.cwd()}/res/${path}`, data, (err) => {
+            fs.writeFile(`${process.cwd()}/res/${path}`, data, 'utf8', (err) => {
                 if (err) reject(err);
                 resolve();
             });
