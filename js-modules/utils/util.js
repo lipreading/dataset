@@ -11,6 +11,10 @@ module.exports = {
         }, {});
     },
 
+    copyFile(from, to) {
+        fs.createReadStream(`${process.cwd()}/res/${from}`).pipe(fs.createWriteStream(`${process.cwd()}/res/${to}`));
+    },
+
     writeToFile(path, data) {
         return new Promise((resolve, reject) => {
             fs.writeFile(`${process.cwd()}/res/${path}`, data, 'utf8', (err) => {
