@@ -7,4 +7,6 @@
 # devideOnFrames
 # getFaceIntervals
 # getWordsForVideo
+# trimMp3ForCorrectAlignment
 # getWordsAlignment(+ replaceUnicodeInWordsMap)
+# formFramesPack

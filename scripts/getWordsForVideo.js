@@ -25,7 +25,7 @@ const browser = new Browser();
                 const subtitles = await getSubtitlesFromBrowser(browser);
                 await writeToFile(`videos/${videoName}/words.json`, JSON.stringify(subtitles));
 
-                const wordsTxt = subtitles.map(data => data.text).reduce((res, el) => {
+                const wordsTxt = subtitles.map(data => data.text).slice(1).reduce((res, el) => {
                     if (el !== '[музыка]') {
                         el.split(' ').forEach(word => {
                             res += `${word}\n`;
