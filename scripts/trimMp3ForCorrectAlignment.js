@@ -14,13 +14,19 @@ const devide = async () => {
         console.log(`#${i}/${dirs.length} ${name}`);
         const newName = `${name}_alignment-trim.mp3`;
         if (readDir(`videos/${name}`).indexOf(newName) !== -1) {
-            removeFile(`videos/${name}/${newName}`);
+            //removeFile(`videos/${name}/${newName}`);
         }
 
         const words = JSON.parse(await readFile(`videos/${name}/words.json`));
         // отсчет времени начинает со следующей секунды второй пачки слов EX: 0 == 00:07 + 00:01
-        let startTime = `00:${words[1].time.slice(0, words[1].time.length - 1)}${Number(words[1].time[words[1].time.length - 1]) + 1}`;
-        let endTime = `00:${words[words.length - 2].time}`;
+
+        const transformTime = time => {
+            const split = time.split(':');
+            const newTime = Number(split[1]) + 1;
+            return (newTime < 10) ? `${split[0]}:0${newTime}` : `${split[0]}:${newTime}`
+        };
+        const startTime = `00:${transformTime(words[1].time)}`;
+        const endTime = `00:${transformTime(words[words.length - 2].time)}`;
 
         //ffmpeg -i audio.mp3 -acodec copy -ss 00:00:00 -t 00:01:00 trim_audio.mp3
         const cmd = `ffmpeg -i ${path}/${name}.mp3 -acodec copy -ss ${startTime} -t ${endTime} ${path}/${newName}`.split(' ');

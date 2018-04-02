@@ -6,14 +6,16 @@ const browser = new Browser();
 
 (async () => {
     const dirs = readDir('videos');
-    // const dirs = ['wqEgfScm2rs', 'xeOp8ZJZmsY'];
 
     for (let i = 0; i < dirs.length; i++) {
         const videoName = dirs[i];
         console.log(`#${i}/${dirs.length} ${videoName}`);
+
         try {
             const status = getLstat(`videos/${videoName}`);
             if (status.isDirectory()) {
+                if (readDir(`videos/${videoName}`).indexOf('words.json') !== -1) continue;
+
                 await browser.createBuilder();
                 const url = `https://www.youtube.com/watch?v=${videoName}`;
                 await browser.openPage(url);
