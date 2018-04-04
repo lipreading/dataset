@@ -15,7 +15,6 @@ from skimage import io
 from os import listdir
 from PIL import Image
 import PIL
-import json
 from resizeimage import resizeimage
 
 OKBLUE = '\033[94m'
@@ -124,46 +123,27 @@ for num, dir_name in enumerate(videos_names):
     mouth_frames_folder_data = os.path.join(os.getcwd(), 'res', 'videos', dir_name, 'mouth_frames', '__data')
     mouth_frames_data_file = os.path.join(mouth_frames_folder_data, 'data.csv')
 
-    if not os.path.exists(mouth_frames_folder):
-        os.makedirs(mouth_frames_folder)
-        os.makedirs(mouth_frames_folder_data)
-        # print((OKGREEN + 'Video Already cooked #{}/{} - {}' + ENDC).format(num + 1, len(videos_names), dir_name))
-        # continue
+    if os.path.exists(mouth_frames_folder):
+        print((OKGREEN + 'Video Already cooked #{}/{} - {}' + ENDC).format(num + 1, len(videos_names), dir_name))
+        continue
 
     # if os.path.exists(mouth_frames_folder):
     #    shutil.rmtree(mouth_frames_folder)
 
+    os.makedirs(mouth_frames_folder)
+    os.makedirs(mouth_frames_folder_data)
+
     # номера кадров, которые удовлетворяют всем условиям
     frames_numbers = []
     # список всех кадров
-    glob_frames = glob.glob(os.path.join(video_folder, '*.jpg'))
-    glob_mouth_frames = glob.glob(os.path.join(mouth_frames_folder, '*.jpg'))
-    glob_mouth_frames = sorted(glob_mouth_frames, key=lambda name: int(re.search('\/(\d+)\.\w+$', name).group(1)))
-
-    first_mouth_frame_number = len(glob_mouth_frames) > 0 and int(re.search('\/(\d+)\.\w+$', glob_mouth_frames[0]).group(1))
-    last_mouth_frame_number = len(glob_mouth_frames) > 0 and int(re.search('\/(\d+)\.\w+$', glob_mouth_frames[len(glob_mouth_frames) - 1]).group(1))
-
-    with open(os.path.join(os.getcwd(), 'res', 'videos', dir_name, 'words.json')) as json_data:
-            d = json.load(json_data)
-            length = len(d)
-            split = d[length - 1]['time'].split(':')
-            total = int(split[0]) * 60 * 25 + int(split[1]) * 25
-            if total < last_mouth_frame_number + 1000:
-                print((OKGREEN + 'Video Already cooked #{}/{} - {}' + ENDC).format(num + 1, len(videos_names), dir_name))
-                continue
-
+    glob_frames = glob.glob(os.path.join(video_folder, "*.jpg"))
     for frame_path in sorted(glob_frames,
             key=lambda name: int(re.search('\/thumb(\d+)\.\w+$', name).group(1))):
+
         frame_number = int(re.search('\/thumb(\d+)\.\w+$', frame_path).group(1))
 
         if frame_number % 5 == 0 or frame_number == 1:
             print(('Processing Video ' + OKBLUE + '#{}/{}' + ENDC + ' - {}, frame_number: ' + OKBLUE + '{}/{}' + ENDC).format(num + 1, len(videos_names), dir_name, frame_number, len(glob_frames)))
-
-        if first_mouth_frame_number:
-            if last_mouth_frame_number >= frame_number:
-                if os.path.exists(os.path.join(mouth_frames_folder, str(frame_number) + '.jpg')):
-                    frames_numbers.append(frame_number)
-                continue
 
         dets, dots = prepare_img(frame_path)
         if len(dets) == 0 or len(dots) == 0:

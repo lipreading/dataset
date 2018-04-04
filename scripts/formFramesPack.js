@@ -13,13 +13,15 @@ const devide = async () => {
         }
 
         console.log(`#${i}/${dirs.length} ${name}`);
-        const cmd = `rm -rf ${path}/framePack`.split(' ');
-        const rm = spawn(cmd[0], cmd.slice(1));
-        await new Promise(resolve => rm.on('close', resolve));
-        // if (readDir(`videos/${name}`).indexOf('framePack') !== -1) {
-        //     rmDir(`videos/${name}/framePack`);
-        // }
-        mkDir(`videos/${name}/framePack`);
+        if (readDir(`videos/${name}`).indexOf('framePack') !== -1) {
+            continue;
+        } else {
+            mkDir(`videos/${name}/framePack`);
+        }
+
+        // const cmd = `rm -rf ${path}/framePack`.split(' ');
+        // const rm = spawn(cmd[0], cmd.slice(1));
+        // await new Promise(resolve => rm.on('close', resolve));
 
 
         // отсчет времени начинает со следующей секунды второй пачки слов EX: 0 == 00:07 + 00:01
@@ -27,7 +29,7 @@ const devide = async () => {
         const wordsMap = JSON.parse(await readFile(`videos/${name}/wordsMap.json`)).fragments;
         const words = JSON.parse(await readFile(`videos/${name}/words.json`));
 
-        const START_TIME = Number(words[1].time[4]) + 1; // in seconds
+        const START_TIME = Number(words[1].time.slice(3)); // in seconds
         const FRAMES_PER_S = 25;
 
         for (let j = 0; j < wordsMap.length; j++) {

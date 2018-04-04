@@ -18,7 +18,9 @@ const convert = async () => {
         const cmd = `ffmpeg -i ${file}.mp3 -ar 8000 ${file}.wav`.split(' ');
         const ffmpeg = spawn(cmd[0], cmd.slice(1));
         try {
-            removeFile(`videos/${name}/${name}.wav`)
+            try {
+                removeFile(`videos/${name}/${name}.wav`)
+            } catch(e) {}
             await getData(ffmpeg);
             /* removeFile(`videos/${name}/decoder-test.scp`);
             removeFile(`videos/${name}/decoder-test.utt2spk`); */
