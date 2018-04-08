@@ -7,7 +7,6 @@ const devide = async () => {
 
     for (let i = 0; i < dirs.length; i++) {
         const name = dirs[i];
-        // if (name === 'AxLkzGH_jDs') continue;
 
         const path = `${process.cwd()}/res/videos/${name}`;
         const framePackPath = `${path}/framePack`;
@@ -28,82 +27,64 @@ const devide = async () => {
         const mouthFrames = await readMouthFrames(name);
         // const wordsMap = JSON.parse(await readFile(`videos/${name}/wordsMap.json`)).fragments;
         const words = JSON.parse(await readFile(`videos/${name}/words.json`));
-        const youtubeWords = await readYoutubeWords(name);
-        let kaldiAlignment = await readKaldiAlignment(name);
 
-        const START_TIME = Number(words[1].time.slice(3)) + 1; // in seconds
+        const START_TIME = Number(words[1].time.slice(3)); // in seconds
         const START_WORD = words[1].text.split(' ')[0];
         const FRAMES_PER_S = 25;
 
-        let k = 0;
-        for (;k < kaldiAlignment.length; k++) {
-            if (START_WORD === kaldiAlignment[k].word) break;
-        }
 
-        kaldiAlignment = kaldiAlignment.slice(k);
+        for (let j = 1; j < words.length - 1; j++) {
+            const wordsComplex = words[j];
+            const nextWordsComplex = words[j + 1];
+            if (wordsComplex.text === '[музыка]') continue;
+            const splitWords = wordsComplex.text.split(' ');
 
-        // //TODO запустить формирование кадров
-        // //TODO выровнять все слова с youtube и kaldi, если слово не совпадает, значит ставим null (из-за того что слова не правильно определяются получается гавно)
-        // let resq = [];
-        // for (let j = 0, g = 0; j < youtubeWords.length; j++) {
-        //     console.log(youtubeWords[j], kaldiAlignment[g].word);
-        //     const l = new Levenshtein(youtubeWords[j], kaldiAlignment[g].word);
-        //     if (l.distance <= 2 ) {
-        //         resq.push(youtubeWords[j]);
-        //         g++;
-        //     }
-        // }
+            const start = Number(wordsComplex.time.slice(0, 2)) * 60 + Number(wordsComplex.time.slice(3, 5));
+            const end = Number(nextWordsComplex.time.slice(0, 2)) * 60 + Number(nextWordsComplex.time.slice(3, 5));
+            const letterLength = splitWords.join('').length;
 
-        // console.log(resq);
-        // break;
+            const diff = end - start;
+            const sPerLetter = diff / letterLength;
 
-        const kk = kaldiAlignment[0].start / START_TIME;
-        for (let j = 0; j < kaldiAlignment.length; j++) {
-            const wordData = kaldiAlignment[j];
-            const id = `f${j}`;
-            const word = wordData.word;
-            console.log(`#${j + 1}/${kaldiAlignment.length} ${id}`);
+            let offset = 0;
+            for (let k = 0; k < splitWords.length; k++) {
+                const word = splitWords[k];
+                const id = `f${j}_${k}`;
+                console.log(`#${j + 1}/${words.length} ${id}`);
 
-            const start = wordData.start / kk;
-            const end = wordData.end / kk;
+                const time = word.length * sPerLetter;
 
-            const startFrameNumber = Math.floor(start * FRAMES_PER_S);
-            const endFrameNumber = Math.floor(end * FRAMES_PER_S);
+                const startF = start + offset;
+                const endF = startF + time;
 
-            // console.log(start, end, wordData.word, kk, startFrameNumber, endFrameNumber);
+                const startFrameNumber = Math.floor(startF * FRAMES_PER_S);
+                const endFrameNumber = Math.floor(endF * FRAMES_PER_S);
 
-            const framesCount = endFrameNumber - startFrameNumber + 1;
+                offset += time;
 
-            const foundedKey = finedInMouthFrames(mouthFrames, startFrameNumber, endFrameNumber);
-            if (!foundedKey) {
-                continue;
-            }
-
-            /* if (framesCount > FRAMES_PER_S) {
-
-            } else if (framesCount < FRAMES_PER_S) {
-
-            } else {
-
-            } */
-
-            const framePackFrame = `videos/${name}/framePack/${id}`;
-            mkDir(framePackFrame);
-
-            await writeToFile(`${framePackFrame}/__data.json`, JSON.stringify({
-                word: word,
-                time: {
-                    start: start,
-                    end: end
-                },
-                frames: {
-                    start: startFrameNumber,
-                    end: endFrameNumber
+                const foundedKey = finedInMouthFrames(mouthFrames, startFrameNumber, endFrameNumber);
+                if (!foundedKey) {
+                    continue;
                 }
-            }));
 
-            for (let q = startFrameNumber; q < endFrameNumber + 1; q++) {
-                copyFile(`videos/${name}/mouth_frames/${q}.jpg`, `${framePackFrame}/${q}.jpg`);
+                const framePackFrame = `videos/${name}/framePack/${id}`;
+                mkDir(framePackFrame);
+
+                await writeToFile(`${framePackFrame}/__data.json`, JSON.stringify({
+                    word: word,
+                    time: {
+                        start: startF,
+                        end: endF
+                    },
+                    frames: {
+                        start: startFrameNumber,
+                        end: endFrameNumber
+                    }
+                }));
+
+                for (let q = startFrameNumber; q < endFrameNumber + 1; q++) {
+                    copyFile(`videos/${name}/mouth_frames/${q}.jpg`, `${framePackFrame}/${q}.jpg`);
+                }
             }
         }
     }

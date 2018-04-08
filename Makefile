@@ -9,4 +9,4 @@
 # getWordsForVideo
 # trimMp3ForCorrectAlignment
 # getWordsAlignment(+ replaceUnicodeInWordsMap)
-# formFramesPack
+# formFramesPack  НЕ ЗАБЫВАТЬ ПРОВЕРЯТЬ, ЧТО ВНАЧАЛЕ СЛОВА ЕСТЬ Пересекающиеся или поправлять их (определение offset сверху)
