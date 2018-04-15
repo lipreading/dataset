@@ -2,5 +2,6 @@
 .vscode
 node_modules/
 res/videos
+res/framePacks
 kaldi-trunk
 .DS_Store

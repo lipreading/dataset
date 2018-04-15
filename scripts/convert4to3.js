@@ -11,7 +11,7 @@ const convert = async () => {
         }
         const path = `${process.cwd()}/res/videos/${name}/${name}`;
 
-        console.log(`#${i}/${dirs.length} ${name}`);
+        console.log(`#${i + 1}/${dirs.length} ${name}`);
         if (readDir(`videos/${name}`).indexOf(`${name}.mp3`) !== -1) {
             continue;
         }

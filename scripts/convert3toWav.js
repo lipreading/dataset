@@ -10,12 +10,12 @@ const convert = async () => {
             continue;
         }
         const path = `${process.cwd()}/res/videos/${name}/`;
-        const file = `${path}${name}`;
-        console.log(`#${i}/${dirs.length} ${name}`);
+        const file = `${path}${name}_alignment-trim`;
+        console.log(`#${i + 1}/${dirs.length} ${name}`);
 
         //mpg123 -w output.wav input.mp3
         //const cmd = `mpg123 -w ${file}.wav ${file}.mp3`.split(' ');
-        const cmd = `ffmpeg -i ${file}.mp3 -ar 8000 ${file}.wav`.split(' ');
+        const cmd = `ffmpeg -i ${file}.mp3 -ar 8000 ${file.replace('_alignment-trim', '')}.wav`.split(' ');
         const ffmpeg = spawn(cmd[0], cmd.slice(1));
         try {
             try {

@@ -11,13 +11,13 @@ const devide = async () => {
             continue;
         }
 
-        console.log(`#${i}/${dirs.length} ${name}`);
+        console.log(`#${i + 1}/${dirs.length} ${name}`);
         const newName = `${name}_alignment-trim.mp3`;
         if (readDir(`videos/${name}`).indexOf(newName) !== -1) {
-            //removeFile(`videos/${name}/${newName}`);
+            removeFile(`videos/${name}/${newName}`);
         }
 
-        const words = JSON.parse(await readFile(`videos/${name}/words.json`));
+        const words = JSON.parse(await readFile(`videos/${name}/words1.json`));
         // отсчет времени начинает со следующей секунды второй пачки слов EX: 0 == 00:07 + 00:01
 
         const transformTime = time => {
@@ -25,7 +25,7 @@ const devide = async () => {
             const newTime = Number(split[1]) + 1;
             return (newTime < 10) ? `${split[0]}:0${newTime}` : `${split[0]}:${newTime}`
         };
-        const startTime = `00:${transformTime(words[1].time)}`;
+        const startTime = `00:${transformTime(words[0].time)}`;
         const endTime = `00:${transformTime(words[words.length - 2].time)}`;
 
         //ffmpeg -i audio.mp3 -acodec copy -ss 00:00:00 -t 00:01:00 trim_audio.mp3

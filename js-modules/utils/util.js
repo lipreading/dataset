@@ -34,7 +34,9 @@ module.exports = {
     },
 
     removeFile(path) {
-        fs.unlinkSync(`${process.cwd()}/res/${path}`);
+        try {
+            fs.unlinkSync(`${process.cwd()}/res/${path}`);
+        } catch (e) {}
     },
 
     getLstat(path) {
