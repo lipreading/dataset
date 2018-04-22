@@ -5,3 +5,4 @@ res/videos
 res/framePacks
 kaldi-trunk
 .DS_Store
+scripts/podgon.js

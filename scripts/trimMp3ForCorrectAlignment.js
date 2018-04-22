@@ -29,7 +29,7 @@ const devide = async () => {
         const endTime = `00:${transformTime(words[words.length - 2].time)}`;
 
         //ffmpeg -i audio.mp3 -acodec copy -ss 00:00:00 -t 00:01:00 trim_audio.mp3
-        const cmd = `ffmpeg -i ${path}/${name}.mp3 -acodec copy -ss ${startTime} -t ${endTime} ${path}/${newName}`.split(' ');
+        const cmd = `ffmpeg -i ${path}/${name}.mp3 -acodec copy -ss ${startTime} -to ${endTime} ${path}/${newName}`.split(' ');
         console.log(cmd.join(' '));
         const ffmpeg = spawn(cmd[0], cmd.slice(1));
         try {

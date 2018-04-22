@@ -48,7 +48,9 @@ module.exports = {
     },
 
     rmDir(path) {
-        fs.rmdirSync(`${process.cwd()}/res/${path}`)
+        try {
+            fs.rmdirSync(`${process.cwd()}/res/${path}`)
+        } catch (e) {}
     },
 
     readDir(path) {
