@@ -33,6 +33,10 @@ module.exports = {
         });
     },
 
+    readFileSync(path) {
+        return fs.readFileSync(`${process.cwd()}/res/${path}`);
+    },
+
     removeFile(path) {
         try {
             fs.unlinkSync(`${process.cwd()}/res/${path}`);
