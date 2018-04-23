@@ -113,7 +113,7 @@ videos_names = listdir(os.path.join(os.getcwd(), 'res', 'videos'))
 
 for num, dir_name in enumerate(videos_names):
     print((OKGREEN + 'Start {}' + ENDC).format(dir_name))
-    if (dir_name == '.DS_Store'):
+    if (dir_name == '.DS_Store' or dir_name == '._.DS_Store'):
         continue
     # ПУТЬ папки с кадрами
     video_folder = os.path.join(os.getcwd(), 'res', 'videos', dir_name, 'frames')
