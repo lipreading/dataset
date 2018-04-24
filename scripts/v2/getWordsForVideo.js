@@ -20,12 +20,12 @@ const browser = new Browser();
             await browser.waitUntil({
                 id: 'menu'
             });
-            await browser.wait(3000);
+            await browser.wait(5000);
 
             const subtitles = await getSubtitlesFromBrowser(browser);
             await writeToFile(`videos/${videoName}/words.json`, JSON.stringify(subtitles));
 
-        } catch(e) {
+        } catch(err) {
             console.log(`${err}; url=${videoName}`)
         } finally {
             await browser.removeBuilder();

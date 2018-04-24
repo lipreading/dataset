@@ -54,13 +54,13 @@ const cut = async () => {
         };
 
         for (let j = 0; j < words.length - 1; j++) {
-            console.log(`#${j}`);
             const el1 = words[j];
             const el2 = words[j + 1];
 
             const ffmpegTimeStart = `00:${el1.time}`;
             const ffmpegTimeEnd = `00:${el2.time}`;
 
+            console.log(`#${j} ${ffmpegTimeStart} ${ffmpegTimeEnd}`);
             await cutAudio(ffmpegTimeStart, ffmpegTimeEnd, j);
         }
     }
