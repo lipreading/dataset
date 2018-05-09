@@ -47,39 +47,42 @@ def resize_img_by_height(path, mouth_nose_distance):
     img.save(path)
 
 def prepare_img(path, force_return=False):
-    MOUTH_NOSE_DIST_MAX = N_SIZE / 2 + 3
-    MOUTH_NOSE_DIST_MIN = N_SIZE / 2
-    DIFF = 10
-    dets = []
-    dots = []
+    try:
+        MOUTH_NOSE_DIST_MAX = N_SIZE / 2 + 3
+        MOUTH_NOSE_DIST_MIN = N_SIZE / 2
+        DIFF = 10
+        dets = []
+        dots = []
 
-    img = io.imread(path)
+        img = io.imread(path)
 
-    # массив лиц
-    dets = detector(img, 1)
+        # массив лиц
+        dets = detector(img, 1)
 
-    if len(dets) == 1:
-        # контрольные точки лица
-        shape = predictor(img, dets[0])
+        if len(dets) == 1:
+            # контрольные точки лица
+            shape = predictor(img, dets[0])
 
-        for i in range(shape.num_parts):
-            dot = shape.parts().pop(i)
-            dots.append([int(dot.x), int(dot.y)])
+            for i in range(shape.num_parts):
+                dot = shape.parts().pop(i)
+                dots.append([int(dot.x), int(dot.y)])
 
-        if force_return:
-            return dets, dots
-
-        if shape.num_parts == 68:
-            nose_p = dots[30]
-            mouth_p = dots[62]
-            mouth_nose_distance = math.sqrt(math.pow(nose_p[0] - mouth_p[0], 2) + math.pow(nose_p[1] - mouth_p[1], 2))
-
-            if MOUTH_NOSE_DIST_MIN <= mouth_nose_distance <= MOUTH_NOSE_DIST_MAX:
+            if force_return:
                 return dets, dots
-            else:
-                resize_img_by_height(path, mouth_nose_distance)
-                return prepare_img(path, True)
-    return [], []
+
+            if shape.num_parts == 68:
+                nose_p = dots[30]
+                mouth_p = dots[62]
+                mouth_nose_distance = math.sqrt(math.pow(nose_p[0] - mouth_p[0], 2) + math.pow(nose_p[1] - mouth_p[1], 2))
+
+                if MOUTH_NOSE_DIST_MIN <= mouth_nose_distance <= MOUTH_NOSE_DIST_MAX:
+                    return dets, dots
+                else:
+                    resize_img_by_height(path, mouth_nose_distance)
+                    return prepare_img(path, True)
+        return [], []
+    except Exception:
+        return [], []
 
 def draw_rect_on_canvas(img, face_bound, dots):
     window_name = 'result'

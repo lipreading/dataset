@@ -34,8 +34,8 @@ const sum = async () => {
             alignment.fragments.forEach(data => {
                 result.push({
                     word: data.lines[0],
-                    startTime: parseTimeToSeconds(timeStart) + parseFloat(data.begin),
-                    endTime: parseTimeToSeconds(timeStart) + parseFloat(data.end)
+                    startTime: parseTimeToSeconds(timeStart) + parseFloat(data.begin) + 0.5,
+                    endTime: parseTimeToSeconds(timeStart) + parseFloat(data.end) + 0.5
                 });
             });
         }

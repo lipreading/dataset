@@ -6,6 +6,7 @@ const browser = new Browser();
 
 (async () => {
     const dirs = readDir('videos');
+    // const dirs = ['W_gDCP525VA'];
 
     for (let i = 0; i < dirs.length; i++) {
         const videoName = dirs[i];

@@ -12,6 +12,9 @@
   "license": "ISC",
   "dependencies": {
     "levenshtein": "^1.0.5",
-    "selenium-webdriver": "^4.0.0-alpha.1"
+    "node-fetch": "^2.1.2",
+    "selenium-webdriver": "^4.0.0-alpha.1",
+    "uuid": "^3.2.1",
+    "xml-parser": "^1.2.1"
   }
 }

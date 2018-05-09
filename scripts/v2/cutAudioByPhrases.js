@@ -57,6 +57,8 @@ const cut = async () => {
             const el1 = words[j];
             const el2 = words[j + 1];
 
+            /* const ffmpegTimeStart = `00:${el1.time}.5`;
+            const ffmpegTimeEnd = `00:${el2.time}.5`; */
             const ffmpegTimeStart = `00:${el1.time}.5`;
             const ffmpegTimeEnd = `00:${el2.time}.5`;
 
